@@ -152,3 +152,8 @@ As usual, the root links for the multisidebar should be relative to the version 
 *Example, the `/something-else` root link will be processed into `/0.1.0/something-else`.*
 
 That's it! Any issues, please report them, much appreciated.
+
+# Some things to note.
+
+- You may want to exclude versioned pages using a robots.txt file.
+- You may want to exclude versioned pages from your sitemap.

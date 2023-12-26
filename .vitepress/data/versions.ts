@@ -161,7 +161,7 @@ export function generateVersionSidebars(): DefaultTheme.SidebarMulti {
       versionSidebars[`/${version}/`] = versionSidebar as DefaultTheme.SidebarItem[]
     } else {
       Object.keys(versionSidebar).forEach(key => {
-        versionSidebars[`/${version}/${key}`] = versionSidebar[key] as DefaultTheme.SidebarItem[]
+        versionSidebars[`/${version}${key}`] = versionSidebar[key] as DefaultTheme.SidebarItem[]
       });
     }
   }
