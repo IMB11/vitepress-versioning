@@ -1,15 +1,23 @@
-[
-  {
-    text: "0.1.0",
-    items: [
-      {
-        text: "Test Page",
-        link: "/",
-      },
-      {
-        text: "Sub Test",
-        link: "/sub/",
-      },
-    ],
-  },
-]
+{
+  "/": [
+    {
+      text: "0.1.0",
+      items: [
+        {
+          text: "Test Page",
+          link: "/",
+        },
+        {
+          text: "Sub Test",
+          link: "/sub/",
+        },
+        {
+          text: "Different Version Test",
+          process: false,
+          // Should remain as "/" because process is set to false.
+          link: "/",
+        },
+      ],
+    },
+  ],
+}

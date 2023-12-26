@@ -60,6 +60,10 @@ export function generateVersionRewrites(): Record<string, string> {
   return rewrites
 }
 
+/**
+ * Generates a nav item for the version switcher, which contains all versions in the "versions" folder and the latest version.
+ * @returns {DefaultTheme.NavItem} A nav item that contains all versions in the "versions" folder.
+ */
 export function generateVersionSwitcher(): DefaultTheme.NavItem {
   const versionsDir = path.resolve(__dirname, '../../versions')
   const versions = fs.readdirSync(versionsDir)
@@ -84,6 +88,13 @@ export function generateVersionSwitcher(): DefaultTheme.NavItem {
   return versionSwitcher;
 }
 
+/**
+ * Replaces all links in the sidebar with their versioned equivalents.
+ * @example `{link: '/test'}` becomes `{link: '/0.1.0/test'}`
+ * @param sidebar The sidebar to replace links in.
+ * @param version The version to prepend to all links.
+ * @returns {DefaultTheme.SidebarItem[]} The sidebar with all links prepended with the version.
+ */
 function replaceLinksRecursive(sidebar: DefaultTheme.SidebarItem[], version: string): DefaultTheme.SidebarItem[] {
   // Prepend the version to all links. `{VERSION}/$link`
   const versionedSidebar = sidebar.map(item => {
@@ -101,20 +112,42 @@ function replaceLinksRecursive(sidebar: DefaultTheme.SidebarItem[], version: str
   return versionedSidebar
 }
 
-export function getSidebar(version: string): DefaultTheme.SidebarItem[] {
+/**
+ * Gets the sidebar for a specific version.
+ * This function will look for a sidebar.json5 file in the specified version's folder, or else return an empty sidebar.
+ * @param version Get the sidebar for a specific version.
+ * @returns {DefaultTheme.SidebarItem[]} The sidebar for the specified version.
+ */
+export function getSidebar(version: string): DefaultTheme.SidebarItem[] | DefaultTheme.SidebarMulti {
   const versionDir = path.resolve(__dirname, `../../versions/${version}`)
   const sidebarPath = path.resolve(versionDir, 'sidebar.json5')
 
   if (fs.existsSync(sidebarPath)) {
     const sidebar = JSON5.parse(fs.readFileSync(sidebarPath, 'utf-8'))
 
+    if (!Array.isArray(sidebar)) {
+      // Must be a multisidebar instance.
+      const multisidebar = sidebar as DefaultTheme.SidebarMulti;
+
+      // Replace all links in the sidebar with their versioned equivalents.
+      Object.keys(multisidebar).forEach(key => {
+        multisidebar[key] = replaceLinksRecursive(multisidebar[key] as DefaultTheme.SidebarItem[], version)
+      });
+
+      return multisidebar;
+    }
+
     // Replace all links in the sidebar with their versioned equivalents.
     return replaceLinksRecursive(sidebar, version)
   }
 
-  return []
+  return [];
 }
 
+/**
+ * Generates a sidebar for each version in the "versions" folder.
+ * @returns {DefaultTheme.SidebarMulti} A map of versions to their sidebars.
+ */
 export function generateVersionSidebars(): DefaultTheme.SidebarMulti {
   const versionsDir = path.resolve(__dirname, '../../versions')
   const versions = fs.readdirSync(versionsDir)
@@ -122,7 +155,15 @@ export function generateVersionSidebars(): DefaultTheme.SidebarMulti {
   const versionSidebars: DefaultTheme.SidebarMulti = {}
 
   for (const version of versions) {
-    versionSidebars[`/${version}/`] = getSidebar(version)
+    const versionSidebar = getSidebar(version);
+
+    if (Array.isArray(versionSidebar)) {
+      versionSidebars[`/${version}/`] = versionSidebar as DefaultTheme.SidebarItem[]
+    } else {
+      Object.keys(versionSidebar).forEach(key => {
+        versionSidebars[`/${version}/${key}`] = versionSidebar[key] as DefaultTheme.SidebarItem[]
+      });
+    }
   }
 
   console.log(util.inspect(versionSidebars, false, null, true))
