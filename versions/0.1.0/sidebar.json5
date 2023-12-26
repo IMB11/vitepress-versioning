@@ -1,0 +1,15 @@
+[
+  {
+    text: "0.1.0",
+    items: [
+      {
+        text: "Test Page",
+        link: "/",
+      },
+      {
+        text: "Sub Test",
+        link: "/sub/",
+      },
+    ],
+  },
+]
