@@ -25,7 +25,7 @@ export default defineConfig({
         },
         {
           text: 'Sub Test',
-          link: '/sub/test',
+          link: '/sub/',
         }
       ],
       ...generateVersionSidebars()
