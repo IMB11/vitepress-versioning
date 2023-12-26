@@ -98,6 +98,9 @@ export function generateVersionSwitcher(): DefaultTheme.NavItem {
 function replaceLinksRecursive(sidebar: DefaultTheme.SidebarItem[], version: string): DefaultTheme.SidebarItem[] {
   // Prepend the version to all links. `{VERSION}/$link`
   const versionedSidebar = sidebar.map(item => {
+    // @ts-ignore
+    if (item.process === false) return item;
+
     if (item.link) {
       item.link = `/${version}${item.link}`
     }
