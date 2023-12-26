@@ -81,7 +81,7 @@ export function generateVersionSwitcher(): DefaultTheme.NavItem {
   for (const version of versions) {
     versionSwitcher.items.push({
       text: version,
-      link: `/versions/${version}/`
+      link: `/${version}/`
     })
   }
 
